@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final static int SPEECH_REQUEST_CODE = 2;
     private final static int LOGO_DETECTION = 0;
     private final static int TEXT_DETECTION = 1;
-
+    protected static String dataToSend;
 
     private WebView webView;
     private Button scan_btn;
@@ -74,7 +75,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         webView = (WebView) findViewById(R.id.dataView_webView);
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+
+                super.onPageFinished(view, url);
+            }
+        });
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
@@ -233,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
         final StringBuilder url = new StringBuilder("http://35.199.144.87/app/blackrockTest?");
-        final String baseUrl = "http://35.199.144.87/app/blackrockTest";
+//        final String baseUrl = "http://35.199.144.87/app/blackrockTest";
         if (res.size() == 0 || res == null) {
             Toast.makeText(this, "Cannot Detect Image", Toast.LENGTH_LONG).show();
             return;
@@ -247,30 +254,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         Log.e("URL:",url.toString());
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        webView.setVisibility(View.VISIBLE);
-                        Log.e(TAG, "Base URL: " + baseUrl);
-                        Log.e(TAG, "Response: " + response);
-                        webView.loadDataWithBaseURL(baseUrl, response, null, null, null);
-//                        Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
-//                        intent.putExtra("base", baseUrl);
-//                        intent.putExtra("response", response);
-//                        startActivity(intent);
-                        webView.getSettings().setLoadWithOverviewMode(true);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "VOLLEY: error: " + error);
-            }
-        });
+        dataToSend = url.toString();
+        Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+        startActivity(intent);
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
     }
 
     // Create an intent that can start the Speech Recognizer activity
