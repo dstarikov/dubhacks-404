@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -23,8 +24,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.cloud.label.FirebaseVisionCloudLabel;
+import com.google.firebase.ml.vision.cloud.label.FirebaseVisionCloudLabelDetector;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
@@ -43,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private WebView dataView;
     private Button request_btn;
     private Button voice_btn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +73,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.getText_btn:
                 Log.e(TAG, "Open the Album");
                 pickImage();
+                break;
             case R.id.sendRequest_btn:
                 Log.e(TAG, "test sendRequest");
                 sendRequest();
+                break;
             case R.id.voice_btn:
                 Log.e(TAG, "voice recognition");
                 displaySpeechRecognizer();
+                break;
         }
     }
 
@@ -104,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     Log.e(TAG, "Did not select any image");
                 }
+                break;
             case SPEECH_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     List<String> results = data.getStringArrayListExtra(
@@ -111,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String spokenText = results.get(0);
                     Log.e(TAG, "Got this input: " + spokenText);
                 }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -118,23 +128,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void processImage(Bitmap img) {
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(img);
 
-        FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
-                .getOnDeviceTextRecognizer();
+//        FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
+//                .getOnDeviceTextRecognizer();
+//
+//        textRecognizer.processImage(image)
+//                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+//                    @Override
+//                    public void onSuccess(FirebaseVisionText firebaseVisionText) {
+//                        Log.e(TAG, "Success on processing image");
+//                        sendTextToServer(firebaseVisionText);
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.e(TAG, "Fail on processing image");
+//                    }
+//        });
 
-        textRecognizer.processImage(image)
-                .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-                    @Override
-                    public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                        Log.e(TAG, "Success on processing image");
-                        sendTextToServer(firebaseVisionText);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "Fail on processing image");
-                    }
-        });
+        Log.e(TAG, "setting up detector for image");
+        // Image recognition
+        FirebaseVisionCloudLabelDetector detector = FirebaseVision.getInstance()
+                .getVisionCloudLabelDetector();
+        Log.e(TAG, "trying to run detector on image");
+
+        if (detector == null) {
+            Log.e(TAG, "detector is null");
+        } else {
+            Task<List<FirebaseVisionCloudLabel>> result =
+                    detector.detectInImage(image)
+                            .addOnSuccessListener(
+                                    new OnSuccessListener<List<FirebaseVisionCloudLabel>>() {
+                                        @Override
+                                        public void onSuccess(List<FirebaseVisionCloudLabel> labels) {
+                                            Log.e(TAG, "Image cloud recognition succeeded");
+                                            sendLabelsToServer(labels);
+                                        }
+                                    })
+                            .addOnFailureListener(
+                                    new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e(TAG, "Image cloud recognition failed: " + e.getMessage());
+                                        }
+                                    });
+        }
+    }
+
+    private void sendLabelsToServer(List<FirebaseVisionCloudLabel> labels) {
+       Log.e(TAG, "Labeled the image");
+        for (FirebaseVisionCloudLabel label: labels) {
+            String text = label.getLabel();
+            float confidence = label.getConfidence();
+            Log.e(TAG, "label: " + text + ", confidence: " + confidence);
+        }
     }
 
     private void sendRequest() {
