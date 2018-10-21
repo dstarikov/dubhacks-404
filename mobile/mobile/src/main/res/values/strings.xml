@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Dubhacks_404</string>
+    <string name="app_name">Finance Cam</string>
+    <string name="title_activity_web_view">WebViewActivity</string>
 </resources>
