@@ -13,8 +13,9 @@ def index(request):
     return HttpResponse("This is a test page")
 
 def blackrockTest(request):
-    print(request.GET.getlist('text'))
+    print('GET list:',request.GET.getlist('text'))
     ticker = companyToTicker(request.GET.getlist('text'))
+    print('Ticker chosen:',ticker)
     if ticker is None:
         return HttpResponse("Server Returned 420: That's not a company, fam...")
     with open('app/page/pageBegin.html', 'r') as f:
