@@ -33,7 +33,7 @@ def buildCompaniesMap():
     builds a map of company names using the
     pandas data frame
     """
-    df = pd.read_csv('../../../secwiki_tickers.csv')
+    df = pd.read_csv('../../secwiki_tickers.csv')
     # print (df)
     for index, row in df.iterrows():
         companyName = row["name"]
