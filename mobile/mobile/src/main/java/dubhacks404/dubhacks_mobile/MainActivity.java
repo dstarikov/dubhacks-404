@@ -4,14 +4,23 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
@@ -22,13 +31,18 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, KeyEvent.Callback {
     private final static String TAG = "MAIN_ACTIVITY";
     private final static int RESULT_LOAD_IMG = 1;
+    private static final int SPEECH_REQUEST_CODE = 2;
 
     private Button scan_btn;
     private ImageView imageView;
+    private WebView dataView;
+    private Button request_btn;
+    private Button voice_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +53,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         scan_btn = (Button) findViewById(R.id.getText_btn);
         imageView = (ImageView) findViewById(R.id.imageView);
-
+        dataView = (WebView) findViewById(R.id.dataView_webView);
+        request_btn = (Button) findViewById(R.id.sendRequest_btn);
+        voice_btn = (Button) findViewById(R.id.voice_btn);
 
         scan_btn.setOnClickListener(this);
+        request_btn.setOnClickListener(this);
+        voice_btn.setOnClickListener(this);
     }
 
     @Override
@@ -50,6 +68,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.getText_btn:
                 Log.e(TAG, "Open the Album");
                 pickImage();
+            case R.id.sendRequest_btn:
+                Log.e(TAG, "test sendRequest");
+                sendRequest();
+            case R.id.voice_btn:
+                Log.e(TAG, "voice recognition");
+                displaySpeechRecognizer();
         }
     }
 
@@ -61,26 +85,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case RESULT_LOAD_IMG:
+                if (resultCode == RESULT_OK) {
+                    Log.e(TAG, "Done with selecting");
+                    try {
+                        final Uri imageUri = data.getData();
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        imageView.setImageBitmap(selectedImage);
+                        processImage(selectedImage);
 
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "Something is wrong");
+                    }
 
-        if (resultCode == RESULT_OK) {
-            Log.e(TAG, "Done with selecting");
-            try {
-                final Uri imageUri = data.getData();
-                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                imageView.setImageBitmap(selectedImage);
-                processImage(selectedImage);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Log.e(TAG, "Something is wrong");
-            }
-
-        }else {
-            Log.e(TAG, "Did not select any image");
+                } else {
+                    Log.e(TAG, "Did not select any image");
+                }
+            case SPEECH_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    List<String> results = data.getStringArrayListExtra(
+                            RecognizerIntent.EXTRA_RESULTS);
+                    String spokenText = results.get(0);
+                    Log.e(TAG, "Got this input: " + spokenText);
+                }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void processImage(Bitmap img) {
@@ -105,6 +137,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    private void sendRequest() {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+        final String url ="http://10.19.4.45:8000/app/blackrockTest";
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        dataView.loadDataWithBaseURL(url, response, null, null, null);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "VOLLEY: error: " + error);
+            }
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+
+    // Create an intent that can start the Speech Recognizer activity
+    private void displaySpeechRecognizer() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        // Start the activity, the intent will be populated with the speech text
+        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+    }
+
     private void sendTextToServer(FirebaseVisionText result) {
         String resultText = result.getText();
         Log.e(TAG, "H:" + resultText);
@@ -113,5 +178,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //
 //        }
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
+            Log.e(TAG, "VOICE: activating from long press");
+            displaySpeechRecognizer();
+        }
+        return true;
     }
 }
