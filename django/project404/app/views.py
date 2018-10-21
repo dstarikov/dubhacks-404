@@ -68,12 +68,6 @@ def blackrockPerformance(ticker):
             params={ 'identifiers' : ticker })
     return output.text
 
-def blackrockSearchSecurities(ticker):
-    output = requests.get(
-            url="https://www.blackrock.com/tools/hackathon/search-securities",
-            params={ 'identifiers' : ticker })
-    return output.text
-
 def blackrockSecurityData(ticker):
     output = requests.get(
             url="https://www.blackrock.com/tools/hackathon/security-data",
