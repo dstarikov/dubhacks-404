@@ -30,4 +30,6 @@ dependencies {
 
     // for Firebase ML kit
     implementation 'com.google.firebase:firebase-ml-vision:18.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.1'
 }
+
