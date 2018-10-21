@@ -4,6 +4,22 @@
     </head>
     <body>
         <h1>Investment Data Summary</h1>
+        <h2>Stock Graph</h2>
         <canvas id="myChart"></canvas>
+        <h2>Risk Analysis (Annualized)</h2>
+        <table id="risk" style="width:100%;border:5px solid black;border-collapse:collapse">
+            <tr>
+                <td style="border-right:5px solid black;border-collapse:collapse;text-align:center;font-size:40pt;" id="risk1"></td>
+                <td style="border-right:5px solid black;border-collapse:collapse;text-align:center;font-size:40pt;" id="risk2"></td>
+                <td style="border-right:5px solid black;border-collapse:collapse;text-align:center;font-size:40pt;" id="risk5"></td>
+                <td style="border-right:5px solid black;border-collapse:collapse;text-align:center;font-size:40pt;" id="risk10"></td>
+            </tr>
+            <tr>
+                <td style="padding-left:9px;border-right:5px solid black;border-collapse:collapse;font-size:20pt;">1 Year</td>
+                <td style="padding-left:9px;border-right:5px solid black;border-collapse:collapse;font-size:20pt;">2 Years</td>
+                <td style="padding-left:9px;border-right:5px solid black;border-collapse:collapse;font-size:20pt;">5 Years</td>
+                <td style="padding-left:9px;border-right:5px solid black;border-collapse:collapse;font-size:20pt;">10 Years</td>
+            </tr>
+        </table>
     <!-- Below this line is invisible data -->
     <script type="application/json" id="data-performance">
