@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void sendTextToServer(FirebaseVisionText result) {
         String resultText = result.getText();
-        Log.e(TAG, resultText);
+        Log.e(TAG, "H:" + resultText);
 
 //        for (FirebaseVisionText.TextBlock block : result.getTextBlocks()) {
 //

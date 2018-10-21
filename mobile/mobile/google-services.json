@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "432559870001-8svubct3bs5j4vt47fjunfhd9ca7qiam.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dubhacks404.dubhacks_mobile",
+            "certificate_hash": "543061b0096e7f15e142bdd42d44b0919063ad33"
+          }
+        },
+        {
           "client_id": "432559870001-3m377f720c0pi9d9irikkjab6016lr3f.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432559870001-3m377f720c0pi9d9irikkjab6016lr3f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
