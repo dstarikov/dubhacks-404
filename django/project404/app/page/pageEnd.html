@@ -56,6 +56,11 @@ var mychart2 = new Chart(ctx2, {
             data: riskmap2,
         }],
     },
+    options: {
+        legend: {
+            display:false
+        }
+    },
 });
 var ctx3 = document.getElementById('myChart3').getContext('2d');
 var mychart3 = new Chart(ctx3, {
@@ -68,6 +73,11 @@ var mychart3 = new Chart(ctx3, {
             backgroundColor: 'rgb(255,99,132)',
             data: riskmap3,
         }],
+    },
+    options: {
+        legend: {
+            display:false
+        }
     },
 });
 document.getElementById('risk1').textContent = (risks.oneYearAnnualized * 100).toPrecision(3)+'%';
@@ -108,6 +118,9 @@ var chart = new Chart(ctx, {
     },
     options: {
         pointRadius:10,
+        legend: {
+            display:false
+        }
     },
 });
     </script>
