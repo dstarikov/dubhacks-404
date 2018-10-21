@@ -15,6 +15,8 @@ def index(request):
 def blackrockTest(request):
     print(request.GET.getlist('text'))
     ticker = companyToTicker(request.GET.getlist('text'))
+    if ticker is None:
+        return HttpResponse("Server Returned 420: That's not a company, fam...")
     with open('app/page/pageBegin.html', 'r') as f:
         data1 = f.read()
     data2 = blackrockPerformance(ticker)
@@ -27,7 +29,6 @@ def blackrockTest(request):
     with open('app/page/pageEnd.html', 'r') as f:
         data7 = f.read()
     return HttpResponse(data1+data2+data3+data4+data5+data6+data7)
-
 
 def buildCompaniesMap():
     """
@@ -53,6 +54,8 @@ def companyToTicker(companies):
             if currweight > weight :
                 weight = currweight
                 current = value[0]
+    if weight < 80:
+        return None
     return current
 
 def blackrockPerformance(ticker):
