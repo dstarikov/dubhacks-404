@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import requests
 from fuzzywuzzy import fuzz
-
+from iex import Stock
 # key = full company name -> tuple of info ( ticker, sector, industry)
 companiesMap = {}
 
@@ -27,6 +27,8 @@ def blackrockTest(request):
         data7 = f.read()
     return HttpResponse(data1+data2+data3+data4+data5+data6+data7)
 
+def testStock():
+    print(Stock("AAPL").price())
 
 def buildCompaniesMap():
     """
@@ -69,3 +71,4 @@ def blackrockSecurityData(ticker):
     return output.text
 
 buildCompaniesMap()
+testStock()
