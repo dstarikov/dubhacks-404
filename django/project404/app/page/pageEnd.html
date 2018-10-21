@@ -3,7 +3,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
     <script type="text/javascript">
 let perf = JSON.parse(document.getElementById('data-performance').textContent);
-console.log(perf);
+let secur = JSON.parse(document.getElementById('data-security').textContent).resultMap.SECURITY;
+document.getElementById('company').textContent = secur[0].description;
+
+let assets = secur[0].assetClass;
+let assetType = secur[0].assetType;
+let country = secur[0].countryCode;
+let currency = secur[0].currency;
+let exchangeMarket = secur[0].exchangeAcronym;
+let sector = secur[0].issFtse1Industry;
+document.getElementById('e1').textContent = sector;
+document.getElementById('e2').textContent = exchangeMarket;
+document.getElementById('e3').textContent = country;
+document.getElementById('e4').textContent = assets;
+document.getElementById('e5').textContent = assetType;
+document.getElementById('e6').textContent = currency;
+
 // Risk Analysis
 let risks = perf.resultMap.RETURNS[0].latestPerf;
 document.getElementById('risk1').textContent = (risks.oneYearAnnualized * 100).toPrecision(3)+'%';
