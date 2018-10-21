@@ -13,7 +13,8 @@ def index(request):
     return HttpResponse("This is a test page")
 
 def blackrockTest(request):
-    ticker = companyToTicker('apple')
+    print(request.GET.getlist('text'))
+    ticker = companyToTicker(request.GET.getlist('text'))
     with open('app/page/pageBegin.html', 'r') as f:
         data1 = f.read()
     data2 = blackrockPerformance(ticker)
@@ -43,12 +44,16 @@ def buildCompaniesMap():
         industry = row["industry"]
         companiesMap[companyName] = (ticker, sector, industry)
 
-def companyToTicker(company):
-    for key, value in companiesMap.items():
-        if fuzz.token_set_ratio(key, company.lower()) > 80 :
-            print(value[0])
-            return value[0]
-    return None
+def companyToTicker(companies):
+    weight = 0
+    current = None
+    for company in companies:
+        for key, value in companiesMap.items():
+            currweight = fuzz.token_set_ratio(key, company.lower())
+            if currweight > weight :
+                weight = currweight
+                current = value[0]
+    return current
 
 def blackrockPerformance(ticker):
     output = requests.get(
