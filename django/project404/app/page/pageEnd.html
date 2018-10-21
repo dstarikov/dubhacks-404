@@ -20,7 +20,54 @@ document.getElementById('e5').textContent = assetType;
 document.getElementById('e6').textContent = currency;
 
 // Risk Analysis
+let hack = [
+    'oneYearAnnualized',
+    'twoYearAnnualized',
+    'threeYearAnnualized',
+    'fourYearAnnualized',
+    'fiveYearAnnualized',
+    'sixYearAnnualized',
+    'sevenYearAnnualized',
+    'eightYearAnnualized',
+    'nineYearAnnualized',
+    'tenYearAnnualized'
+];
 let risks = perf.resultMap.RETURNS[0].latestPerf;
+let riskmap = [undefined];
+let riskmap2 = [];
+for (let i = 0; i < hack.length; i++) {
+    riskmap[i+1] = (risks[hack[i]]*100).toPrecision(3);
+    if(!isNaN(riskmap[i+1])) riskmap2.push(['Year '+(i+1),riskmap[i+1],100-riskmap[i+1]]);
+}
+riskmap = [];
+riskmap3 = [];
+for (let i in riskmap2) { riskmap.push(riskmap2[i][0]); }
+for (let i in riskmap2) { riskmap3.push(riskmap2[i][2]); }
+for (let i in riskmap2) { riskmap2[i] = riskmap2[i][1]; }
+var ctx2 = document.getElementById('myChart2').getContext('2d');
+var mychart2 = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels : riskmap,
+        datasets: [{
+            label: 'Risk Percentage',
+            borderColor: 'rgb(255, 99, 132)',
+            data: riskmap2,
+        }],
+    },
+});
+var ctx3 = document.getElementById('myChart3').getContext('2d');
+var mychart3 = new Chart(ctx3, {
+    type: 'bar',
+    data: {
+        labels : riskmap,
+        datasets: [{
+            label: 'Value Percentage',
+            borderColor: 'rgb(255, 99, 132)',
+            data: riskmap3,
+        }],
+    },
+});
 document.getElementById('risk1').textContent = (risks.oneYearAnnualized * 100).toPrecision(3)+'%';
 document.getElementById('risk2').textContent = (risks.twoYearAnnualized * 100).toPrecision(3)+'%';
 document.getElementById('risk5').textContent = (risks.fiveYearAnnualized * 100).toPrecision(3)+'%';
