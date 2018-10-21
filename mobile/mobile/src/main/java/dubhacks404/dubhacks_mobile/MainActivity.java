@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final static int TEXT_DETECTION = 1;
 
 
-    private WebView dataView;
+    private WebView webView;
     private Button scan_btn;
     private Button logo_btn;
     private Button voice_btn;
@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FirebaseApp.initializeApp(this);
 
         scan_btn = (Button) findViewById(R.id.getText_btn);
-        dataView = (WebView) findViewById(R.id.dataView_webView);
         logo_btn = (Button) findViewById(R.id.logo_btn);
         voice_btn = (Button) findViewById(R.id.voice_btn);
 
@@ -72,8 +71,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         logo_btn.setOnClickListener(this);
         voice_btn.setOnClickListener(this);
 
-        dataView.setWebViewClient(new WebViewClient());
-        WebSettings settings = dataView.getSettings();
+
+        webView = (WebView) findViewById(R.id.dataView_webView);
+
+        webView.setWebViewClient(new WebViewClient());
+        WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setLoadWithOverviewMode(true);
@@ -227,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sendRequest(output);
     }
 
-    private void sendRequest(List<String> res) {
+    private void sendRequest(final List<String> res) {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
         final StringBuilder url = new StringBuilder("http://35.199.144.87/app/blackrockTest?");
@@ -250,8 +252,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        dataView.setVisibility(View.VISIBLE);
-                        dataView.loadDataWithBaseURL(baseUrl, response, null, null, null);
+                        webView.setVisibility(View.VISIBLE);
+                        Log.e(TAG, "Base URL: " + baseUrl);
+                        Log.e(TAG, "Response: " + response);
+                        webView.loadDataWithBaseURL(baseUrl, response, null, null, null);
+//                        Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+//                        intent.putExtra("base", baseUrl);
+//                        intent.putExtra("response", response);
+//                        startActivity(intent);
+                        webView.getSettings().setLoadWithOverviewMode(true);
                     }
                 }, new Response.ErrorListener() {
             @Override
