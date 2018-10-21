@@ -1,6 +1,42 @@
     </script>
     <!-- Below this line is a script to display the data -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
     <script type="text/javascript">
+let perf = JSON.parse(document.getElementById('data-performance').textContent);
+// Risk Analysis
+let risks = perf.resultMap.RETURNS[0].latestPerf;
+document.getElementById('risk1').textContent = (risks.oneYearAnnualized * 100).toPrecision(3)+'%';
+document.getElementById('risk2').textContent = (risks.twoYearAnnualized * 100).toPrecision(3)+'%';
+document.getElementById('risk5').textContent = (risks.fiveYearAnnualized * 100).toPrecision(3)+'%';
+document.getElementById('risk10').textContent = (risks.tenYearAnnualized * 100).toPrecision(3)+'%';
+// Graph
+let ticker = perf.resultMap.RETURNS[0].ticker;
+perf = perf.resultMap.RETURNS[0].returnsMap;
+let dates = []; //x
+let values = []; //y
+for (let date in perf) {
+    dates.push(date.replace(/([0-9]{4})([0-9]{2})(.*)/, "$1-$2-$3" ));
+    values.push(perf[date].level);
+}
+Chart.defaults.global.elements.point.radius = .5;
+var ctx = document.getElementById('myChart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: dates,
+        datasets: [{
+            label: ticker,
+            borderColor: 'rgb(255, 99, 132)',
+            data: values,
+        }]
+    },
+    options: {
+        pointRadius:10,
+    },
+});
     </script>
     </body>
 </html>

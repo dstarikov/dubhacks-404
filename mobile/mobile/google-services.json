@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "432559870001",
+    "firebase_url": "https://stately-arc-220123.firebaseio.com",
+    "project_id": "stately-arc-220123",
+    "storage_bucket": "stately-arc-220123.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432559870001:android:2d0f44e8ba7b5b90",
+        "android_client_info": {
+          "package_name": "dubhacks404.dubhacks_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "432559870001-8svubct3bs5j4vt47fjunfhd9ca7qiam.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dubhacks404.dubhacks_mobile",
+            "certificate_hash": "543061b0096e7f15e142bdd42d44b0919063ad33"
+          }
+        },
+        {
+          "client_id": "432559870001-3m377f720c0pi9d9irikkjab6016lr3f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNJYuDQkPKzCOWEw-XdOmqHBgemnyXVpU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432559870001-3m377f720c0pi9d9irikkjab6016lr3f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
