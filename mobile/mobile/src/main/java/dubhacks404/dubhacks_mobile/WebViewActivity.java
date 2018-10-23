@@ -28,6 +28,7 @@ public class WebViewActivity extends AppCompatActivity {
         webView = (WebView) findViewById(R.id.webView);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -56,13 +57,20 @@ public class WebViewActivity extends AppCompatActivity {
         settings.setSupportZoom(true);
         settings.setDefaultTextEncodingName("utf-8");
 
-        // fix
-        webView.loadUrl(MainActivity.dataToSend);
-        Log.d("WEB", MainActivity.dataToSend);
+        if (savedInstanceState == null) {
+            // fix
+            webView.loadUrl(MainActivity.dataToSend);
+            Log.d("WEB", MainActivity.dataToSend);
+        } else {
+            ((WebView)findViewById(R.id.webView)).restoreState(savedInstanceState);
+        }
 
 
     }
 
-
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        webView.saveState(outState);
+    }
 }
