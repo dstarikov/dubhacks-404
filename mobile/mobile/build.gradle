@@ -4,6 +4,7 @@ apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 27
     defaultConfig {
+        applicationId "com.google.firebase.quickstart.auth"
         applicationId "dubhacks404.dubhacks_mobile"
         minSdkVersion 23
         targetSdkVersion 27
@@ -30,7 +31,15 @@ dependencies {
     wearApp project(':wear')
     implementation 'com.google.android.gms:play-services-wearable:+'
 
+    // Google HTTPS
+    implementation 'com.android.volley:volley:1.1.1'
+
     // for Firebase ML kit
     implementation 'com.google.firebase:firebase-ml-vision:18.0.1'
-    compile 'com.android.volley:volley:1.1.1'
+
+    // fir Firebase Auth
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation "com.firebaseui:firebase-ui-auth:4.2.0"
+    implementation 'com.facebook.android:facebook-android-sdk:4.36.0'
+
 }
