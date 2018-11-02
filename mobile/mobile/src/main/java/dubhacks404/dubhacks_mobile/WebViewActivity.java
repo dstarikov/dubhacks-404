@@ -57,20 +57,7 @@ public class WebViewActivity extends AppCompatActivity {
         settings.setSupportZoom(true);
         settings.setDefaultTextEncodingName("utf-8");
 
-        if (savedInstanceState == null) {
-            // fix
-            webView.loadUrl(MainActivity.dataToSend);
-            Log.d("WEB", MainActivity.dataToSend);
-        } else {
-            ((WebView)findViewById(R.id.webView)).restoreState(savedInstanceState);
-        }
-
 
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        webView.saveState(outState);
-    }
 }
