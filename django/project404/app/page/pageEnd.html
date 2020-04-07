@@ -1,0 +1,128 @@
+    </script>
+    <!-- Below this line is a script to display the data -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script type="text/javascript">
+let perf = JSON.parse(document.getElementById('data-performance').textContent);
+let secur = JSON.parse(document.getElementById('data-security').textContent).resultMap.SECURITY;
+document.getElementById('company').textContent = secur[0].description;
+
+let assets = secur[0].assetClass;
+let assetType = secur[0].assetType;
+let country = secur[0].countryCode;
+let currency = secur[0].currency;
+let exchangeMarket = secur[0].exchangeAcronym;
+let sector = secur[0].issFtse1Industry;
+document.getElementById('e1').textContent = sector;
+document.getElementById('e2').textContent = exchangeMarket;
+document.getElementById('e3').textContent = country;
+document.getElementById('e4').textContent = assets;
+document.getElementById('e5').textContent = assetType;
+document.getElementById('e6').textContent = currency;
+
+// Risk Analysis
+let hack = [
+    'oneYearAnnualized',
+    'twoYearAnnualized',
+    'threeYearAnnualized',
+    'fourYearAnnualized',
+    'fiveYearAnnualized',
+    'sixYearAnnualized',
+    'sevenYearAnnualized',
+    'eightYearAnnualized',
+    'nineYearAnnualized',
+    'tenYearAnnualized'
+];
+let risks = perf.resultMap.RETURNS[0].latestPerf;
+let riskmap = [undefined];
+let riskmap2 = [];
+for (let i = 0; i < hack.length; i++) {
+    riskmap[i+1] = (risks[hack[i]]*100).toPrecision(3);
+    if(!isNaN(riskmap[i+1])) riskmap2.push(['Year '+(i+1),riskmap[i+1],100-riskmap[i+1]]);
+}
+riskmap = [];
+riskmap3 = [];
+for (let i in riskmap2) { riskmap.push(riskmap2[i][0]); }
+for (let i in riskmap2) { riskmap3.push(riskmap2[i][2]); }
+for (let i in riskmap2) { riskmap2[i] = riskmap2[i][1]; }
+var ctx2 = document.getElementById('myChart2').getContext('2d');
+var mychart2 = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels : riskmap,
+        datasets: [{
+            label: 'Risk Percentage',
+            borderColor: 'rgb(30,144,255)',
+            backgroundColor: 'rgb(255,99,132)',
+            data: riskmap2,
+        }],
+    },
+    options: {
+        legend: {
+            display:false
+        }
+    },
+});
+var ctx3 = document.getElementById('myChart3').getContext('2d');
+var mychart3 = new Chart(ctx3, {
+    type: 'bar',
+    data: {
+        labels : riskmap,
+        datasets: [{
+            label: 'Value Percentage',
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgb(30,144,255)',
+            data: riskmap3,
+        }],
+    },
+    options: {
+        legend: {
+            display:false
+        }
+    },
+});
+document.getElementById('risk1').textContent = (risks.oneYearAnnualized * 100).toPrecision(3)+'%';
+document.getElementById('risk2').textContent = (risks.twoYearAnnualized * 100).toPrecision(3)+'%';
+document.getElementById('risk5').textContent = (risks.fiveYearAnnualized * 100).toPrecision(3)+'%';
+document.getElementById('risk10').textContent = (risks.tenYearAnnualized * 100).toPrecision(3)+'%';
+if (isNaN(parseFloat(document.getElementById('risk1').textContent)))
+    document.getElementById('risk1').textContent = 'N/A';
+if (isNaN(parseFloat(document.getElementById('risk2').textContent)))
+    document.getElementById('risk2').textContent = 'N/A';
+if (isNaN(parseFloat(document.getElementById('risk5').textContent)))
+    document.getElementById('risk5').textContent = 'N/A';
+if (isNaN(parseFloat(document.getElementById('risk10').textContent)))
+    document.getElementById('risk10').textContent = 'N/A';
+// Graph
+let ticker = perf.resultMap.RETURNS[0].ticker;
+perf = perf.resultMap.RETURNS[0].returnsMap;
+let dates = []; //x
+let values = []; //y
+for (let date in perf) {
+    dates.push(date.replace(/([0-9]{4})([0-9]{2})(.*)/, "$1-$2-$3" ));
+    values.push(perf[date].level);
+}
+Chart.defaults.global.elements.point.radius = .5;
+var ctx = document.getElementById('myChart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: dates,
+        datasets: [{
+            label: ticker,
+            borderColor: 'rgb(30,144,255)',
+            data: values,
+        }]
+    },
+    options: {
+        pointRadius:10,
+        legend: {
+            display:false
+        }
+    },
+});
+    </script>
+    </body>
+</html>
